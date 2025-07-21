@@ -1,16 +1,16 @@
-# python3 setup.py install
-from setuptools import setup
 import os
-from torch.utils.cpp_extension import BuildExtension, CUDAExtension, CppExtension
 from distutils.sysconfig import get_config_vars
+from setuptools import setup
+
+from torch.utils.cpp_extension import BuildExtension, CUDAExtension, CppExtension
+import torch
 
 (opt,) = get_config_vars("OPT")
 os.environ["OPT"] = " ".join(
     flag for flag in opt.split() if flag != "-Wstrict-prototypes"
 )
 
-use_cuda = os.getenv("POINTOPS_USE_CUDA", "0").lower() in ("1", "true", "yes")
-if use_cuda:
+if torch.cuda.is_available():
     ext_modules = [
         CUDAExtension(
             name="pointops_cuda",
